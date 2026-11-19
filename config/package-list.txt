@@ -1,0 +1,66 @@
+# H3C C100 NAS + router package selection
+# One package name per line. Review package availability against selected ImmortalWrt branch.
+
+# LuCI and language
+luci
+luci-ssl
+luci-i18n-base-zh-cn
+luci-app-opkg
+
+# OpenClash and dependencies
+luci-app-openclash
+bash
+curl
+ca-bundle
+ip-full
+ruby
+ruby-yaml
+dnsmasq-full
+kmod-tun
+kmod-inet-diag
+kmod-nft-tproxy
+luci-compat
+unzip
+
+# NAS: SMB / NFS
+samba4-server
+samba4-libs
+luci-app-samba4
+wsdd2
+nfs-kernel-server
+nfs-kernel-server-utils
+rpcbind
+
+# NAS: USB disks and filesystems
+block-mount
+kmod-usb-storage
+kmod-usb-storage-uas
+kmod-fs-ext4
+kmod-fs-exfat
+kmod-fs-ntfs3
+e2fsprogs
+dosfstools
+f2fs-tools
+parted
+lsblk
+smartmontools
+
+# File access, synchronization and downloads
+filebrowser
+syncthing
+aria2
+luci-app-aria2
+
+# System administration and monitoring
+luci-app-ttyd
+ttyd
+htop
+coreutils
+wget-ssl
+ca-certificates
+
+# Network utilities
+ethtool
+iproute2
+iperf3
+tcpdump

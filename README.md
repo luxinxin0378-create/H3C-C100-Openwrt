@@ -17,6 +17,9 @@ H3C C100 custom ImmortalWrt firmware for Intel Atom x5-Z8350.
 
 - x86_64 UEFI build for H3C C100.
 - NAS features: SMB/Samba, NFS, USB storage, ext4/exFAT/NTFS support, disk tools, SMART tools, FileBrowser, Syncthing and download utilities.
+- QModem cellular modem management with the recommended `luci-app-qmodem-next` interface.
+- USB modem drivers for common QMI, MBIM, NCM, ECM, RNDIS and serial/AT-port modes, plus USB mode switching and modem utilities.
+- USB host/storage support for external disks and USB peripherals.
 - OpenClash LuCI package with a pre-staged Mihomo Meta core for x86_64 baseline (AMD64 v1).
 - Preserve Realtek RTL8111 support; verify selected driver against the device.
 - GitHub Actions build artifacts and versioned releases.

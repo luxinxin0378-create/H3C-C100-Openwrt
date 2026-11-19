@@ -48,11 +48,17 @@ jobs:
           mkdir -p package/custom
           cp -a ../openclash/luci-app-openclash package/custom/
 
+      - name: Add QModem feed
+        working-directory: immortalwrt
+        run: |
+          echo 'src-git qmodem https://github.com/FUjr/QModem.git;main' >> feeds.conf.default
+
       - name: Configure feeds and package selection
         working-directory: immortalwrt
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+          ./scripts/feeds install -p qmodem qmodem luci-app-qmodem-next
           mkdir -p files/etc/openclash/core
           while IFS= read -r pkg; do
             pkg="${pkg%%#*}"

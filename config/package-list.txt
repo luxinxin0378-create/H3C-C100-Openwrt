@@ -92,3 +92,10 @@ ethtool
 iproute2
 iperf3
 tcpdump
+
+# SMS forwarding + script runtime + BBR (from AN7581 experience)
+sms-forwarder-next
+luci-app-qmodem-monitor
+jq
+python3
+kmod-tcp-bbr

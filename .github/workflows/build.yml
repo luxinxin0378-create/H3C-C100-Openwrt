@@ -84,6 +84,45 @@ jobs:
           chmod +x scripts/stage-mihomo-core.sh
           scripts/stage-mihomo-core.sh immortalwrt/files/etc/openclash/core
 
+      - name: Stage tuning and SMS forwarder self-heal
+        run: |
+          mkdir -p immortalwrt/files/etc/sysctl.d immortalwrt/files/etc/uci-defaults
+          cat > immortalwrt/files/etc/sysctl.d/91-proxy-tuning.conf <<'PROXYTUNE'
+          net.core.rmem_max = 16777216
+          net.core.wmem_max = 16777216
+          net.ipv4.tcp_rmem = 4096 131072 16777216
+          net.ipv4.tcp_wmem = 4096 65536 16777216
+          net.netfilter.nf_conntrack_max = 65536
+          PROXYTUNE
+          cat > immortalwrt/files/etc/uci-defaults/98-dns-cache <<'DNSCACHE'
+          uci -q set dhcp.@dnsmasq[0].cachesize='2000'
+          uci -q commit dhcp
+          DNSCACHE
+          cat > immortalwrt/files/etc/uci-defaults/94-smsf-apitype <<'SMSF'
+          #!/bin/sh
+          [ -f /etc/config/sms_forwarder ] || exit 0
+          i=0
+          while uci -q get "sms_forwarder.@sms_forward_instance[$i]" >/dev/null 2>&1; do
+            s="sms_forwarder.@sms_forward_instance[$i]"
+            if [ "$(uci -q get "$s.enable")" = "1" ] && [ -z "$(uci -q get "$s.api_type")" ]; then
+              ac=$(uci -q get "$s.api_config")
+              t=""
+              case "$ac" in
+                *'"bot_token"'*)     t=tgbot ;;
+                *'"pushkey"'*)       t=pushdeer ;;
+                *'"recipient_uri"'*) t=sip ;;
+                *open.feishu.cn*)    t=feishu ;;
+                *'"token"'*)         t=serverchan ;;
+                *'"webhook_url"'*)   t=webhook ;;
+              esac
+              [ -n "$t" ] && uci set "$s.api_type=$t"
+            fi
+            i=$((i+1))
+          done
+          uci commit sms_forwarder
+          exit 0
+          SMSF
+
       - name: Download sources
         working-directory: immortalwrt
         run: make download -j8
@@ -102,6 +141,7 @@ jobs:
           VERSION="${{ github.event.inputs.version || 'B1' }}"
           TAG="C100-${VERSION}-${DATE}"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "vername=${VERSION}-${DATE}" >> "$GITHUB_OUTPUT"
           sha256sum release/* > release/SHA256SUMS
 
       - name: Upload build artifacts
@@ -113,12 +153,15 @@ jobs:
           retention-days: 30
 
       - name: Publish release
-        if: github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.collect.outputs.tag }}
-          name: H3C C100 ${{ steps.collect.outputs.tag }}
+          name: 正式版 C100 ${{ steps.collect.outputs.vername }}
           body: |
-            Automated generic x86_64 UEFI build for H3C C100.
-            Verify eMMC partitioning, UEFI boot, Realtek NIC, NAS services and OpenClash core before installation.
+            H3C C100 专用 x86_64 UEFI 固件（ImmortalWrt 24.10，Intel Atom x5-Z8350，2GB RAM）。
+            NAS：Samba4 / NFS / WSDD2 / USB-UAS / ext4-exFAT-NTFS3 / SMART / FileBrowser / Syncthing / Aria2。
+            蜂窝：QModem + RM500Q-GL (5G) / EC20 (4G) + 短信转发器（含 api_type 开机自愈）。
+            代理：OpenClash + Mihomo Meta AMD64 v1（预置）+ BBR + 代理调优 + DNS 缓存。
+            脚本环境：bash / curl / jq / python3 / htop / coreutils。
+            刷写前请确认 eMMC 分区、UEFI 启动、Realtek 网卡与 NAS 服务状态。
           files: release/*

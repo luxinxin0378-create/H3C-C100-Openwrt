@@ -99,3 +99,19 @@ luci-app-qmodem-monitor
 jq
 python3
 kmod-tcp-bbr
+
+# USB WiFi adapters for soft-AP (RTL8811 + common chips)
+# 8811CU/8821CU -> rtw88-8821cu 首选, rtl8xxxu 兜底; 8811AU -> rtw88-8821au
+kmod-rtl8xxxu
+kmod-rtw88-8821cu
+kmod-rtw88-8821au
+kmod-rtw88-8812au
+kmod-rtw88-8822bu
+kmod-rtl8192cu
+kmod-ath9k-htc
+kmod-mt76x0u
+kmod-mt76x2u
+kmod-mt7663u
+wpad-mbedtls
+iwinfo
+iw

@@ -31,6 +31,35 @@ nfs-kernel-server
 nfs-kernel-server-utils
 rpcbind
 
+# QModem: cellular modem management (recommended next-generation LuCI UI)
+qmodem
+luci-app-qmodem-next
+
+# USB host, storage and modem support
+kmod-usb-core
+kmod-usb2
+kmod-usb3
+kmod-usb-storage
+kmod-usb-storage-uas
+kmod-usb-net
+kmod-usb-net-cdc-ether
+kmod-usb-net-cdc-ncm
+kmod-usb-net-cdc-mbim
+kmod-usb-net-qmi-wwan
+kmod-usb-net-rndis
+kmod-usb-net-sierrawireless
+kmod-usb-wdm
+kmod-usb-serial
+kmod-usb-serial-option
+kmod-usb-serial-wwan
+kmod-usb-serial-acm
+kmod-usb-serial-qualcomm
+kmod-usb-acm
+usb-modeswitch
+uqmi
+umbim
+picocom
+
 # NAS: USB disks and filesystems
 block-mount
 kmod-usb-storage

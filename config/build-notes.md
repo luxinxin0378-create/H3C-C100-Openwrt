@@ -1,39 +1,39 @@
-# Build profile notes
+# 构建配置笔记
 
-## NAS profile
+## NAS 配置
 
-This is an OpenWrt-based NAS feature set, not a full TrueNAS/Unraid replacement.
+这是基于 OpenWrt 的 NAS 功能集，不是完整的 TrueNAS/Unraid 替代品。
 
-Included package targets:
-- SMB file sharing through Samba 4
-- NFS server
-- Windows network discovery through WSDD2
-- USB mass-storage and UAS
-- ext4, exFAT, NTFS3 and F2FS filesystem support where available in the selected kernel/feed
-- block-mount, partitioning and disk inspection utilities
-- SMART monitoring utilities
-- FileBrowser, Syncthing and Aria2 where available in the selected feed
+包含的目标包：
+- 通过 Samba 4 提供 SMB 文件共享
+- NFS 服务器
+- 通过 WSDD2 实现 Windows 网络发现
+- USB 大容量存储与 UAS
+- ext4、exFAT、NTFS3 与 F2FS 文件系统支持（视所选内核/feed 可用性而定）
+- block-mount、分区与磁盘检查工具
+- SMART 监控工具
+- FileBrowser、Syncthing 与 Aria2（视所选 feed 可用性而定）
 
-Package names can change between OpenWrt branches. The build log and generated manifest are the source of truth for what was actually selected. A package that is absent from the selected feed must be added from a compatible feed before it can be included.
+包名可能随 OpenWrt 分支变化。构建日志与生成的 manifest 是实际选包结果的唯一依据。所选 feed 里没有的包，必须先从兼容的 feed 添加才能编入。
 
-## OpenClash profile
+## OpenClash 配置
 
-- LuCI package: luci-app-openclash from the upstream OpenClash repository.
-- Proxy core: Mihomo Meta Linux AMD64 v1, installed at /etc/openclash/core/clash_meta.
-- Kernel networking support: kmod-tun and nftables tproxy module.
-- AMD64 v1 is chosen for compatibility with the Atom x5-Z8350. Do not switch to v2/v3 without verifying CPU flags.
+- LuCI 插件：来自 OpenClash 上游仓库的 luci-app-openclash。
+- 代理内核：Mihomo Meta Linux AMD64 v1，安装到 /etc/openclash/core/clash_meta。
+- 内核网络支持：kmod-tun 与 nftables tproxy 模块。
+- 选 AMD64 v1 是为了兼容 Atom x5-Z8350。未验证 CPU 指令集之前不要换 v2/v3。
 
-## Quectel modem profile: RM500Q + EC20
+## Quectel 模组配置：RM500Q + EC20
 
-Target modem support is explicitly set for both Quectel modules:
+明确支持两款 Quectel 模组：
 
-- **RM500Q-GL (5G):** USB QMI mode via `kmod-usb-net-qmi-wwan` + `uqmi`; MBIM via `kmod-usb-net-cdc-mbim` + `umbim`; NCM where the module firmware is configured for NCM via `kmod-usb-net-cdc-ncm`. Keep `kmod-usb-wdm` for the control endpoint and `kmod-usb-serial-option` for AT/diagnostic serial ports. A common upstream USB ID is Quectel `2c7c:0800`.
-- **EC20 (4G):** `kmod-usb-serial-option` + `kmod-usb-serial-wwan` for AT/DIAG/GPS serial functions; QMI data mode via `kmod-usb-net-qmi-wwan` + `uqmi` when the exact EC20 hardware revision/USB composition exposes a QMI interface. A common EC20 R2.0/R2.1 USB ID is `2c7c:0125`.
-- `usb-modeswitch` is included for devices that enumerate initially in a storage/installer mode.
-- QModem is the LuCI management layer; it does not replace kernel drivers or guarantee every modem firmware/USB composition works automatically.
+- **RM500Q-GL（5G）：** USB QMI 模式走 `kmod-usb-net-qmi-wwan` + `uqmi`；MBIM 走 `kmod-usb-net-cdc-mbim` + `umbim`；模组固件配置为 NCM 模式时走 `kmod-usb-net-cdc-ncm`。保留 `kmod-usb-wdm`（控制端点）与 `kmod-usb-serial-option`（AT/诊断串口）。常见上游 USB ID 为 Quectel `2c7c:0800`。
+- **EC20（4G）：** `kmod-usb-serial-option` + `kmod-usb-serial-wwan` 负责 AT/DIAG/GPS 串口功能；当具体硬件版本/USB 组合暴露 QMI 接口时，数据模式走 `kmod-usb-net-qmi-wwan` + `uqmi`。常见 EC20 R2.0/R2.1 USB ID 为 `2c7c:0125`。
+- `usb-modeswitch` 用于处理初始枚举为存储/安装模式的设备。
+- QModem 是 LuCI 管理层；它不替代内核驱动，也不保证每种模组固件/USB 组合都能自动工作。
 
-After connecting each modem, verify `lsusb`, `dmesg`, `ls -l /dev/ttyUSB*`, `ip link`, and `ls /dev/cdc-wdm*`. Confirm the exact VID:PID and USB interface layout before adding any device-specific ID quirk. Do not force an unverified USB ID or change the modem's USB composition blindly.
+模组接好后，用 `lsusb`、`dmesg`、`ls -l /dev/ttyUSB*`、`ip link`、`ls /dev/cdc-wdm*` 验证。添加任何设备专属 ID quirk 之前，先确认确切的 VID:PID 与 USB 接口布局。不要强行写入未验证的 USB ID，也不要盲目更改模组的 USB 组合。
 
-## Storage sizing
+## 存储容量规划
 
-The C100 has 2 GB RAM and a 16 GB eMMC. The internal eMMC should hold the operating system only. Put NAS data on an external USB disk. Do not assume that a generic combined-efi image preserves the existing GPT layout or expands the F2FS overlay in the same way as the installed image.
+C100 有 2 GB 内存与 16 GB eMMC。内置 eMMC 只应存放操作系统。NAS 数据放外接 USB 盘。不要假设通用 combined-efi 镜像会保留现有 GPT 布局，或像已安装系统那样自动扩展 F2FS overlay。

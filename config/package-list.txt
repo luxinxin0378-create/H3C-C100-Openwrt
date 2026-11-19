@@ -52,7 +52,6 @@ kmod-usb-wdm
 kmod-usb-serial
 kmod-usb-serial-option
 kmod-usb-serial-wwan
-kmod-usb-serial-acm
 kmod-usb-serial-qualcomm
 kmod-usb-acm
 usb-modeswitch

@@ -84,7 +84,7 @@ luci-app-ttyd
 ttyd
 htop
 coreutils
-wget-ssl
+# wget-ssl 已移除：与 wpad-mbedtls 的 libustream-ssl.so 文件冲突（opkg check_data_file_clashes）；wget 功能由 curl 提供
 ca-certificates
 
 # Network utilities

@@ -129,7 +129,15 @@ jobs:
 
       - name: 编译固件
         working-directory: immortalwrt
-        run: make -j$(nproc) || make -j1 V=s
+        run: |
+          make -j$(nproc) 2>&1 | tee build.log || true
+          RC=${PIPESTATUS[0]}
+          if [ $RC -ne 0 ]; then
+            echo "::warning::并行编译失败（exit $RC），改用单线程 V=s 重试定位错误"
+            make -j1 V=s 2>&1 | tee -a build.log || true
+            RC=${PIPESTATUS[0]}
+          fi
+          exit $RC
 
       - name: 收集镜像
         id: collect
@@ -151,6 +159,15 @@ jobs:
           path: release/*
           if-no-files-found: error
           retention-days: 30
+
+      - name: 上传完整编译日志（失败排查用）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: H3C-C100-build-log
+          path: immortalwrt/build.log
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: 发布 Release
         uses: softprops/action-gh-release@v2

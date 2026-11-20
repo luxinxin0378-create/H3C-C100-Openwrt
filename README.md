@@ -36,6 +36,14 @@ H3C C100 定制 ImmortalWrt 固件（Intel Atom x5-Z8350 平台）。
 
 构建流程从 Mihomo 官方 Release 拉取 Linux AMD64 v1 资产，预置为 /etc/openclash/core/clash_meta。选 AMD64 v1 是为了最大化 CPU 兼容性。固件同时包含 OpenClash LuCI 插件与 Linux TUN 支持。该内核是用户态代理可执行文件，不是 Linux 内核的替代品。开机后可用 `/etc/openclash/core/clash_meta -v` 验证。
 
+## 默认登录信息
+
+- 登录 IP：192.168.2.1（LAN 口，DHCP 自动分配 192.168.2.x）
+- 网页后台：http://192.168.2.1，用户名 root，密码 root
+- SSH：ssh root@192.168.2.1，密码 root
+- 蜂窝模组管理：LuCI → 网络 → QModem
+- 首次联网后建议尽快修改 root 密码
+
 ## 构建
 
 1. 打开 Actions 页面。

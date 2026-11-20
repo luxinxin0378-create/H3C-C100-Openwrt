@@ -122,6 +122,15 @@ jobs:
           uci commit sms_forwarder
           exit 0
           SMSF
+          cat > immortalwrt/files/etc/uci-defaults/99-lan-root <<'LANROOT'
+          #!/bin/sh
+          # LAN IP 固定为 192.168.2.1
+          uci -q set network.lan.ipaddr='192.168.2.1'
+          uci -q commit network
+          # root 密码固定为 root（chpasswd 优先，busybox passwd 管道兜底）
+          echo 'root:root' | chpasswd >/dev/null 2>&1 || printf 'root\nroot\n' | passwd root >/dev/null 2>&1
+          LANROOT
+          chmod +x immortalwrt/files/etc/uci-defaults/99-lan-root
 
       - name: 下载源码
         working-directory: immortalwrt

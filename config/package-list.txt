@@ -84,7 +84,8 @@ luci-app-ttyd
 ttyd
 htop
 coreutils
-# wget-ssl 已移除：与 wpad-mbedtls 的 libustream-ssl.so 文件冲突（opkg check_data_file_clashes）；wget 功能由 curl 提供
+# wget-ssl 已移除：与 wpad 的 libustream-ssl.so 文件冲突（opkg check_data_file_clashes）；wget 功能由 curl 提供
+# wpad 必须用 openssl 派（wpad-openssl）：mbedtls 版会与系统基础栈默认解析的 libustream-openssl20201210 抢 /lib/libustream-ssl.so
 ca-certificates
 
 # Network utilities
@@ -112,6 +113,6 @@ kmod-ath9k-htc
 kmod-mt76x0u
 kmod-mt76x2u
 kmod-mt7663u
-wpad-mbedtls
+wpad-openssl
 iwinfo
 iw

@@ -52,8 +52,14 @@ jobs:
           CONFIG_PACKAGE_kmod-tun=y
           CONFIG_PACKAGE_kmod-usb-storage=y
           CONFIG_PACKAGE_kmod-usb-storage-uas=y
+          # libustream 冲突实验：只保留 openssl 实现
+          # CONFIG_PACKAGE_libustream-mbedtls is not set
+          # CONFIG_PACKAGE_libustream-wolfssl is not set
+          CONFIG_PACKAGE_libustream-openssl=y
           EOF
           make defconfig
+          echo "===== unset 实验结果：defconfig 后 mbedtls 状态 ====="
+          grep -E "ustream" .config || echo "(无 ustream 行)" 
 
       - name: 诊断一：defconfig 后的 libustream 选择
         working-directory: immortalwrt
@@ -68,10 +74,10 @@ jobs:
         working-directory: immortalwrt
         run: |
           echo "===== 硬依赖 libustream-mbedtls20201210 的 Makefile ====="
-          grep -rln "libustream-mbedtls20201210" package/ feeds/ target/ --include=Makefile 2>/dev/null | head -30
+          grep -rln "libustream-mbedtls" package/ feeds/ target/ --include=Makefile 2>/dev/null | grep -v "ustream-ssl/Makefile" | head -30
           echo ""
           echo "===== 上述文件中的 DEPENDS 行 ====="
-          grep -rn "libustream-mbedtls20201210" package/ feeds/ target/ --include=Makefile 2>/dev/null | head -30
+          grep -rn "libustream-mbedtls" package/ feeds/ target/ --include=Makefile 2>/dev/null | grep -v "ustream-ssl/Makefile" | head -40
           echo ""
           echo "===== 依赖虚拟 libustream-ssl 的包（DEPENDS 引用） ====="
           grep -rn "libustream-ssl" package/ feeds/ target/ --include=Makefile 2>/dev/null | grep -vE "libustream-(mbedtls|openssl|wolfssl)" | head -40

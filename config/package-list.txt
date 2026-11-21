@@ -2,8 +2,10 @@
 # One package name per line. Review package availability against selected ImmortalWrt branch.
 
 # LuCI and language
+# luci-ssl 已移除：其 DEPENDS 硬绑 libustream-mbedtls，与基础包集默认的 libustream-openssl
+# 抢 /lib/libustream-ssl.so 导致 opkg check_data_file_clashes（三次编译失败根因）。
+# LuCI 管理页走 HTTP 即可，需要 HTTPS 时可改用 mbedtls 派整栈。
 luci
-luci-ssl
 luci-i18n-base-zh-cn
 luci-app-opkg
 
